@@ -1,0 +1,207 @@
+/* TaskForm Component Styles */
+.task-form-container {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-normal);
+}
+
+.task-form {
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.task-input {
+  flex: 1;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: 1rem;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  transition: all var(--transition-normal);
+  min-height: 48px;
+}
+
+.task-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.task-input.error {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.task-input::placeholder {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.task-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-surface);
+}
+
+.add-button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 120px;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  min-height: 48px;
+}
+
+.add-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.add-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.add-button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.button-text {
+  font-weight: 600;
+}
+
+.error-message {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+.form-hint {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-xs);
+}
+
+.character-count {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 640px) {
+  .task-form-container {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .input-group {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .task-input {
+    min-height: 44px; /* Touch-friendly on mobile */
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .add-button {
+    min-height: 44px; /* Touch-friendly on mobile */
+    width: 100%;
+  }
+  
+  .button-text {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-form-container {
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .task-input {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .add-button {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .task-input {
+    border-width: 2px;
+  }
+  
+  .task-input:focus {
+    border-width: 3px;
+  }
+  
+  .error-message {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .add-button {
+    transition: none;
+  }
+  
+  .add-button:hover {
+    transform: none;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+  
+  .loading-spinner::after {
+    content: '...';
+  }
+}

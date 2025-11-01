@@ -38,16 +38,16 @@
     - Integrate localStorage persistence for all task operations
     - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 8.2, 8.3, 10.3_
 
-- [ ] 4. Create core UI components
+- [x] 4. Create core UI components
 
-  - [ ] 4.1 Build Header component with theme toggle
+  - [x] 4.1 Build Header component with theme toggle
 
     - Create app header with title and theme toggle button
     - Implement theme toggle UI with appropriate icons
     - Add responsive styling for mobile devices
     - _Requirements: 6.1, 6.2, 9.1, 9.2_
 
-  - [ ] 4.2 Build TaskForm component with validation
+  - [x] 4.2 Build TaskForm component with validation
 
     - Create controlled input form for task creation
     - Implement form validation to prevent empty task submission
@@ -55,7 +55,7 @@
     - Clear input field after successful task creation
     - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-  - [ ] 4.3 Build TaskFilters component
+  - [x] 4.3 Build TaskFilters component
     - Create filter buttons for All, Completed, and Pending views
     - Implement active filter state indication
     - Add responsive styling for mobile layouts

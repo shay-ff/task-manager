@@ -1,0 +1,258 @@
+/* TaskFilters Component Styles */
+.task-filters {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-normal);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-md);
+}
+
+.filters-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.total-count {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  background-color: var(--color-background);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  min-height: 44px;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+}
+
+.filter-button:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-button:focus,
+.filter-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.filter-button:active {
+  transform: translateY(0);
+}
+
+.filter-button.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.filter-button.active:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.filter-icon {
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-label {
+  font-weight: inherit;
+  white-space: nowrap;
+}
+
+.filter-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: inherit;
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.filter-button:not(.active) .filter-count {
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 640px) {
+  .task-filters {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .filters-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .filters-title {
+    font-size: 1rem;
+  }
+  
+  .filter-buttons {
+    width: 100%;
+    gap: var(--spacing-xs);
+  }
+  
+  .filter-button {
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-sm);
+  }
+  
+  .filter-label {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-filters {
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .filter-buttons {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .filter-button {
+    justify-content: flex-start;
+    padding: var(--spacing-md);
+  }
+  
+  .filter-label {
+    font-size: 0.875rem;
+    flex: 1;
+    text-align: left;
+  }
+}
+
+@media (max-width: 320px) {
+  .filters-header {
+    gap: var(--spacing-xs);
+  }
+  
+  .filters-title {
+    font-size: 0.875rem;
+  }
+  
+  .total-count {
+    font-size: 0.75rem;
+    padding: 2px var(--spacing-xs);
+  }
+  
+  .filter-button {
+    padding: var(--spacing-sm);
+  }
+  
+  .filter-icon {
+    font-size: 0.875rem;
+  }
+  
+  .filter-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .filter-button {
+    border-width: 2px;
+  }
+  
+  .filter-button.active {
+    border-width: 3px;
+  }
+  
+  .filter-count {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .filter-button {
+    transition: none;
+  }
+  
+  .filter-button:hover {
+    transform: none;
+  }
+}
+
+/* Focus management for keyboard navigation */
+.filter-button:focus-visible {
+  z-index: 1;
+}
+
+/* Animation for count changes */
+.filter-count {
+  transition: all var(--transition-fast);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .filter-count {
+    animation: pulse 0.3s ease-in-out;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
