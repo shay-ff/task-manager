@@ -1,0 +1,97 @@
+.task-list {
+  width: 100%;
+  max-width: 100%;
+}
+
+.task-list__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-height: 200px;
+}
+
+/* Empty state styles */
+.task-list--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: var(--spacing-xl);
+}
+
+.task-list__empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 300px;
+}
+
+.task-list__empty-icon {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+  opacity: 0.6;
+}
+
+.task-list__empty-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.task-list__empty-subtext {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Drag and drop visual feedback */
+.task-list__container .sortable-task-item {
+  transition: transform 200ms ease;
+}
+
+/* Performance optimizations for large lists */
+.task-list__container {
+  contain: layout style paint;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .task-list--empty {
+    min-height: 250px;
+    padding: var(--spacing-lg);
+  }
+  
+  .task-list__empty-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .task-list__empty-text {
+    font-size: 1rem;
+  }
+  
+  .task-list__empty-subtext {
+    font-size: 0.8rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .task-list__container .sortable-task-item {
+    transition: none;
+  }
+  
+  .sortable-task-item__drag-handle {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .task-list__empty-icon {
+    opacity: 1;
+  }
+}

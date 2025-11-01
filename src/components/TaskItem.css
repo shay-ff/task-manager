@@ -1,0 +1,224 @@
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-sm);
+  transition: all 0.2s ease;
+  min-height: 60px;
+}
+
+.task-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-item--completed {
+  opacity: 0.7;
+  background: var(--color-background);
+}
+
+.task-item__content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: var(--spacing-md);
+}
+
+.task-item__checkbox-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.task-item__checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.task-item__checkmark {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-item__checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--color-surface);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.task-item__checkbox:checked ~ .task-item__checkmark {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.task-item__checkbox:checked ~ .task-item__checkmark::after {
+  display: block;
+}
+
+.task-item__checkbox:focus ~ .task-item__checkmark {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.task-item__text {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  word-break: break-word;
+  transition: all 0.2s ease;
+}
+
+.task-item__text--completed {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+.task-item__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.task-item__delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.task-item__delete-btn:hover {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.task-item__delete-btn:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.task-item__delete-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.task-item__delete-confirm {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.task-item__confirm-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+}
+
+.task-item__confirm-btn--danger {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.task-item__confirm-btn--danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.task-item__confirm-btn--cancel {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.task-item__confirm-btn--cancel:hover {
+  background: var(--color-surface);
+  border-color: var(--color-text-secondary);
+}
+
+.task-item__confirm-btn:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .task-item {
+    padding: var(--spacing-sm);
+    min-height: 56px;
+  }
+  
+  .task-item__content {
+    gap: var(--spacing-sm);
+  }
+  
+  .task-item__delete-btn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .task-item__confirm-btn {
+    min-width: 50px;
+    padding: var(--spacing-xs);
+    font-size: 0.8rem;
+  }
+}
+
+/* Animation classes for task entry/exit */
+.task-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.task-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.task-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.task-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms ease, transform 300ms ease;
+}

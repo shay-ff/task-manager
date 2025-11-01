@@ -1,0 +1,81 @@
+.sortable-task-item {
+  position: relative;
+  z-index: 1;
+}
+
+.sortable-task-item--dragging {
+  z-index: 999;
+}
+
+.sortable-task-item__content {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-xs);
+}
+
+.sortable-task-item__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  min-height: 60px;
+  background: transparent;
+  border: none;
+  cursor: grab;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+.sortable-task-item__drag-handle:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+  opacity: 1;
+}
+
+.sortable-task-item__drag-handle:active {
+  cursor: grabbing;
+}
+
+.sortable-task-item__drag-handle:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+.sortable-task-item__drag-icon {
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.sortable-task-item__task {
+  flex: 1;
+}
+
+/* Remove margin from TaskItem when inside sortable container */
+.sortable-task-item__task .task-item {
+  margin-bottom: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .sortable-task-item__drag-handle {
+    width: 32px;
+    min-height: 56px;
+  }
+  
+  .sortable-task-item__drag-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .sortable-task-item__drag-handle {
+    opacity: 1;
+    background: var(--color-surface);
+  }
+}
