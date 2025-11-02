@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -8,7 +8,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -41,21 +40,79 @@ const TaskList = memo(() => {
   );
 
   /**
-   * Handle drag end event to reorder tasks
+   * Handle drag end event to reorder tasks with error handling
    * @param {object} event - The drag end event
    */
   const handleDragEnd = useCallback((event) => {
-    const { active, over } = event;
+    try {
+      const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const oldIndex = filteredTasks.findIndex(task => task.id === active.id);
-      const newIndex = filteredTasks.findIndex(task => task.id === over.id);
-      
-      if (oldIndex !== -1 && newIndex !== -1) {
+      // Validate drag event data
+      if (!active || !active.id) {
+        console.warn('Invalid drag event: missing active item');
+        return;
+      }
+
+      // Only proceed if dropped over a valid target
+      if (active.id !== over?.id && over?.id) {
+        const oldIndex = filteredTasks.findIndex(task => task.id === active.id);
+        const newIndex = filteredTasks.findIndex(task => task.id === over.id);
+        
+        // Validate indices
+        if (oldIndex === -1) {
+          console.warn('Drag error: Could not find source task');
+          return;
+        }
+        
+        if (newIndex === -1) {
+          console.warn('Drag error: Could not find target position');
+          return;
+        }
+
+        // Validate that indices are within bounds
+        if (oldIndex < 0 || oldIndex >= filteredTasks.length || 
+            newIndex < 0 || newIndex >= filteredTasks.length) {
+          console.warn('Drag error: Invalid task indices');
+          return;
+        }
+
+        // Perform the reorder operation
         reorderTasks(oldIndex, newIndex);
       }
+    } catch (error) {
+      console.error('Error during drag and drop operation:', error);
+      
+      // Optionally show user-friendly error message
+      // This could be enhanced with a toast notification system
+      alert('Failed to reorder tasks. Please try again.');
     }
   }, [filteredTasks, reorderTasks]);
+
+  /**
+   * Handle drag start event with error handling
+   * @param {object} event - The drag start event
+   */
+  const handleDragStart = useCallback((event) => {
+    try {
+      // Validate that we're dragging a valid task
+      const taskExists = filteredTasks.some(task => task.id === event.active.id);
+      if (!taskExists) {
+        console.warn('Drag start error: Task not found in current list');
+        return;
+      }
+    } catch (error) {
+      console.error('Error during drag start:', error);
+    }
+  }, [filteredTasks]);
+
+  /**
+   * Handle drag cancel event
+   * @param {object} event - The drag cancel event
+   */
+  const handleDragCancel = useCallback(() => {
+    // Log for debugging purposes
+    console.log('Drag operation was cancelled');
+  }, []);
 
   // Show empty state if no tasks
   if (filteredTasks.length === 0) {
@@ -89,7 +146,9 @@ const TaskList = memo(() => {
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
         modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
       >
         <SortableContext

@@ -1,79 +1,97 @@
-import React, { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useTaskContext } from '../contexts/TaskContext';
+import { validateTaskDescription, sanitizeInput } from '../utils/validation';
 import './TaskForm.css';
 
 /**
  * TaskForm component for creating new tasks with validation
+ * Memoized to prevent unnecessary re-renders
  * @returns {JSX.Element} - TaskForm component
  */
-function TaskForm() {
+const TaskForm = memo(function TaskForm() {
   const { addTask } = useTaskContext();
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
-   * Handle form submission
+   * Handle form submission with validation and sanitization
    * @param {Event} e - Form submit event
    */
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
     // Clear previous error
     setError('');
     
-    // Validate input
-    const trimmedValue = inputValue.trim();
-    if (!trimmedValue) {
-      setError('Task description cannot be empty');
-      return;
-    }
-
-    if (trimmedValue.length > 500) {
-      setError('Task description must be 500 characters or less');
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       
-      // Add the task
-      addTask(trimmedValue);
+      // Validate and sanitize the input
+      const validation = validateTaskDescription(inputValue);
+      
+      if (!validation.isValid) {
+        setError(validation.error);
+        return;
+      }
+
+      // Use the sanitized value
+      const sanitizedDescription = validation.sanitized;
+      
+      // Add the task with sanitized description
+      addTask(sanitizedDescription);
       
       // Clear the input field after successful creation
       setInputValue('');
       setError('');
     } catch (err) {
+      console.error('Error creating task:', err);
       setError('Failed to create task. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [addTask, inputValue]);
 
   /**
-   * Handle input change
+   * Handle input change with real-time sanitization
    * @param {Event} e - Input change event
    */
-  const handleInputChange = (e) => {
-    const value = e.target.value;
+  const handleInputChange = useCallback((e) => {
+    let value = e.target.value;
+    
+    // Apply basic sanitization in real-time to prevent obvious XSS attempts
+    // But allow the user to see what they're typing
+    const sanitized = sanitizeInput(value);
+    
+    // If the sanitized version is significantly different, use the sanitized version
+    // This prevents script tags and other dangerous content from being displayed
+    if (sanitized !== value && (value.includes('<') || value.includes('javascript:'))) {
+      value = sanitized;
+    }
+    
     setInputValue(value);
     
-    // Clear error when user starts typing
+    // Clear error when user starts typing valid content
     if (error && value.trim()) {
       setError('');
     }
-  };
+    
+    // Show real-time validation for length
+    if (value.length > 500) {
+      setError('Task description must be 500 characters or less');
+    }
+  }, [error]);
 
   /**
-   * Handle key press for accessibility
-   * @param {Event} e - Key press event
+   * Handle key down for accessibility (replacing deprecated onKeyPress)
+   * @param {Event} e - Key down event
    */
-  const handleKeyPress = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
-  };
+  }, [handleSubmit]);
 
   return (
     <div className="task-form-container">
@@ -89,7 +107,7 @@ function TaskForm() {
             placeholder="What needs to be done?"
             value={inputValue}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             disabled={isSubmitting}
             maxLength={500}
             aria-describedby={error ? 'task-error' : undefined}
@@ -131,6 +149,6 @@ function TaskForm() {
       </form>
     </div>
   );
-}
+});
 
 export default TaskForm;

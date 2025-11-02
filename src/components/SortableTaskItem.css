@@ -1,10 +1,13 @@
 .sortable-task-item {
   position: relative;
   z-index: 1;
+  transition: transform var(--transition-normal) ease-out;
 }
 
 .sortable-task-item--dragging {
   z-index: 999;
+  transform: rotate(2deg) scale(1.02);
+  box-shadow: var(--shadow-lg);
 }
 
 .sortable-task-item__content {
@@ -23,19 +26,42 @@
   border: none;
   cursor: grab;
   color: var(--color-text-secondary);
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) ease-out;
   border-radius: 4px;
   opacity: 0.6;
+  position: relative;
+}
+
+.sortable-task-item__drag-handle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--color-primary);
+  border-radius: 50%;
+  transition: all var(--transition-normal) ease-out;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.1;
 }
 
 .sortable-task-item__drag-handle:hover {
-  background: var(--color-surface);
   color: var(--color-text);
   opacity: 1;
+  transform: scale(1.1);
+}
+
+.sortable-task-item__drag-handle:hover::before {
+  width: 100%;
+  height: 80%;
+  border-radius: 4px;
 }
 
 .sortable-task-item__drag-handle:active {
   cursor: grabbing;
+  transform: scale(0.95);
 }
 
 .sortable-task-item__drag-handle:focus {
@@ -60,10 +86,26 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .sortable-task-item__drag-handle {
+    width: 36px;
+    min-height: 56px;
+  }
+  
+  .sortable-task-item__drag-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .sortable-task-item__content {
+    gap: var(--spacing-xs);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
   .sortable-task-item__drag-handle {
     width: 32px;
-    min-height: 56px;
+    min-height: 60px;
   }
   
   .sortable-task-item__drag-icon {
@@ -77,5 +119,43 @@
   .sortable-task-item__drag-handle {
     opacity: 1;
     background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+  
+  .sortable-task-item__drag-handle::before {
+    width: 80%;
+    height: 60%;
+    border-radius: 4px;
+    opacity: 0.2;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sortable-task-item__drag-handle {
+    width: 28px;
+    min-height: 48px;
+  }
+  
+  .sortable-task-item__drag-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Large screens optimization */
+@media (min-width: 1024px) {
+  .sortable-task-item__drag-handle {
+    width: 28px;
+    min-height: 64px;
+  }
+  
+  .sortable-task-item__drag-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .sortable-task-item__content {
+    gap: var(--spacing-sm);
   }
 }

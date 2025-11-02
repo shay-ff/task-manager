@@ -7,13 +7,31 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   margin-bottom: var(--spacing-sm);
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) ease-out;
   min-height: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left var(--transition-slow) ease-out;
 }
 
 .task-item:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.task-item:hover::before {
+  left: 100%;
 }
 
 .task-item--completed {
@@ -51,10 +69,15 @@
   background-color: transparent;
   border: 2px solid var(--color-border);
   border-radius: 4px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.task-item__checkmark:hover {
+  border-color: var(--color-success);
+  transform: scale(1.1);
 }
 
 .task-item__checkmark::after {
@@ -73,6 +96,19 @@
 .task-item__checkbox:checked ~ .task-item__checkmark {
   background-color: var(--color-success);
   border-color: var(--color-success);
+  animation: checkboxCheck 0.3s ease-out;
+}
+
+@keyframes checkboxCheck {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .task-item__checkbox:checked ~ .task-item__checkmark::after {
@@ -90,12 +126,28 @@
   line-height: 1.5;
   color: var(--color-text);
   word-break: break-word;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) ease-out;
+  position: relative;
 }
 
 .task-item__text--completed {
   text-decoration: line-through;
   color: var(--color-text-secondary);
+  animation: strikethrough 0.4s ease-out;
+}
+
+@keyframes strikethrough {
+  0% {
+    text-decoration: none;
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
 }
 
 .task-item__actions {
@@ -115,13 +167,35 @@
   border-radius: 6px;
   cursor: pointer;
   color: var(--color-text-secondary);
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item__delete-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--color-danger);
+  border-radius: 50%;
+  transition: all var(--transition-normal) ease-out;
+  transform: translate(-50%, -50%);
+  z-index: -1;
 }
 
 .task-item__delete-btn:hover {
-  background: var(--color-danger);
   color: white;
   border-color: var(--color-danger);
+  transform: scale(1.1);
+}
+
+.task-item__delete-btn:hover::before {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
 }
 
 .task-item__delete-btn:focus {
@@ -178,14 +252,25 @@
 }
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .task-item {
     padding: var(--spacing-sm);
     min-height: 56px;
+    border-radius: var(--border-radius-md);
   }
   
   .task-item__content {
     gap: var(--spacing-sm);
+  }
+  
+  .task-item__checkmark {
+    height: 24px;
+    width: 24px;
+  }
+  
+  .task-item__text {
+    font-size: 0.875rem;
+    line-height: 1.4;
   }
   
   .task-item__delete-btn {
@@ -194,9 +279,70 @@
   }
   
   .task-item__confirm-btn {
-    min-width: 50px;
+    min-width: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .task-item {
+    padding: var(--spacing-md);
+    min-height: 60px;
+  }
+  
+  .task-item__content {
+    gap: var(--spacing-md);
+  }
+  
+  .task-item__delete-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .task-item__confirm-btn {
+    min-width: 55px;
     padding: var(--spacing-xs);
     font-size: 0.8rem;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .task-item {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    min-height: 48px;
+  }
+  
+  .task-item__checkmark {
+    height: 18px;
+    width: 18px;
+  }
+  
+  .task-item__text {
+    font-size: 0.8rem;
+  }
+  
+  .task-item__delete-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Large screens optimization */
+@media (min-width: 1024px) {
+  .task-item {
+    padding: var(--spacing-lg);
+    min-height: 64px;
+  }
+  
+  .task-item__text {
+    font-size: 1.125rem;
+  }
+  
+  .task-item__checkmark {
+    height: 22px;
+    width: 22px;
   }
 }
 

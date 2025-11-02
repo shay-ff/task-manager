@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import { createContext, useContext, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { validateTaskDescription, validateTasksArray } from '../utils/validation';
 
 // Create the Task Context
 const TaskContext = createContext(undefined);
@@ -12,50 +13,82 @@ const TaskContext = createContext(undefined);
  * @returns {JSX.Element} - TaskProvider component
  */
 export function TaskProvider({ children }) {
-  // State management with localStorage persistence
-  const [tasks, setTasks] = useLocalStorage('tasks', []);
-  const [filter, setFilter] = useLocalStorage('taskFilter', 'all');
+  // State management with localStorage persistence and validation
+  const [rawTasks, setRawTasks, tasksError] = useLocalStorage('tasks', []);
+  const [filter, setFilter, filterError] = useLocalStorage('taskFilter', 'all');
+
+  // Validate and sanitize tasks when they're loaded
+  const tasks = useMemo(() => {
+    if (!Array.isArray(rawTasks)) {
+      console.warn('Tasks data is not an array, resetting to empty array');
+      return [];
+    }
+
+    const validation = validateTasksArray(rawTasks);
+    if (!validation.isValid) {
+      console.warn('Invalid tasks data detected:', validation.error);
+      if (validation.removedCount > 0) {
+        console.warn(`Removed ${validation.removedCount} invalid tasks`);
+      }
+    }
+
+    return validation.sanitizedTasks;
+  }, [rawTasks]);
 
   /**
-   * Add a new task to the list
+   * Add a new task to the list with validation and sanitization
    * @param {string} description - The task description
    */
   const addTask = useCallback((description) => {
-    if (!description || description.trim() === '') {
-      return; // Prevent empty task creation
+    // Validate and sanitize the description
+    const validation = validateTaskDescription(description);
+    
+    if (!validation.isValid) {
+      console.error('Invalid task description:', validation.error);
+      throw new Error(validation.error);
     }
 
     const newTask = {
       id: uuidv4(),
-      description: description.trim(),
+      description: validation.sanitized,
       completed: false,
       createdAt: new Date(),
       order: tasks.length // Set order based on current length
     };
 
-    setTasks(prevTasks => [...prevTasks, newTask]);
-  }, [tasks.length, setTasks]);
+    setRawTasks(prevTasks => [...prevTasks, newTask]);
+  }, [tasks.length, setRawTasks]);
 
   /**
-   * Toggle the completion status of a task
+   * Toggle the completion status of a task with validation
    * @param {string} id - The task ID
    */
   const toggleTask = useCallback((id) => {
-    setTasks(prevTasks =>
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid task ID provided to toggleTask');
+      return;
+    }
+
+    setRawTasks(prevTasks =>
       prevTasks.map(task =>
         task.id === id
           ? { ...task, completed: !task.completed }
           : task
       )
     );
-  }, [setTasks]);
+  }, [setRawTasks]);
 
   /**
-   * Delete a task from the list
+   * Delete a task from the list with validation
    * @param {string} id - The task ID
    */
   const deleteTask = useCallback((id) => {
-    setTasks(prevTasks => {
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid task ID provided to deleteTask');
+      return;
+    }
+
+    setRawTasks(prevTasks => {
       const filteredTasks = prevTasks.filter(task => task.id !== id);
       // Reorder remaining tasks to maintain sequential order
       return filteredTasks.map((task, index) => ({
@@ -63,15 +96,31 @@ export function TaskProvider({ children }) {
         order: index
       }));
     });
-  }, [setTasks]);
+  }, [setRawTasks]);
 
   /**
-   * Reorder tasks based on drag and drop operation
+   * Reorder tasks based on drag and drop operation with validation
    * @param {number} startIndex - The starting index of the dragged item
    * @param {number} endIndex - The ending index where the item is dropped
    */
   const reorderTasks = useCallback((startIndex, endIndex) => {
-    setTasks(prevTasks => {
+    // Validate indices
+    if (typeof startIndex !== 'number' || typeof endIndex !== 'number') {
+      console.error('Invalid indices provided to reorderTasks');
+      return;
+    }
+
+    if (startIndex < 0 || endIndex < 0) {
+      console.error('Negative indices provided to reorderTasks');
+      return;
+    }
+
+    if (startIndex >= tasks.length || endIndex >= tasks.length) {
+      console.error('Indices out of bounds in reorderTasks');
+      return;
+    }
+
+    setRawTasks(prevTasks => {
       const result = Array.from(prevTasks);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
@@ -82,7 +131,7 @@ export function TaskProvider({ children }) {
         order: index
       }));
     });
-  }, [setTasks]);
+  }, [tasks.length, setRawTasks]);
 
   /**
    * Get filtered tasks based on current filter
@@ -103,7 +152,7 @@ export function TaskProvider({ children }) {
     }
   }, [tasks, filter]);
 
-  // Context value object
+  // Context value object with error states
   const contextValue = useMemo(() => ({
     tasks,
     addTask,
@@ -112,7 +161,12 @@ export function TaskProvider({ children }) {
     reorderTasks,
     filter,
     setFilter,
-    filteredTasks
+    filteredTasks,
+    // Expose error states for components to handle
+    errors: {
+      tasks: tasksError,
+      filter: filterError
+    }
   }), [
     tasks,
     addTask,
@@ -121,7 +175,9 @@ export function TaskProvider({ children }) {
     reorderTasks,
     filter,
     setFilter,
-    filteredTasks
+    filteredTasks,
+    tasksError,
+    filterError
   ]);
 
   return (

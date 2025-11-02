@@ -1,12 +1,14 @@
-import React from 'react';
+
+import { memo } from 'react';
 import { useThemeContext } from '../contexts/ThemeContext';
 import './Header.css';
 
 /**
  * Header component with app title and theme toggle functionality
+ * Memoized to prevent unnecessary re-renders
  * @returns {JSX.Element} - Header component
  */
-function Header() {
+const Header = memo(function Header() {
   const { theme, toggleTheme } = useThemeContext();
 
   return (
@@ -30,6 +32,6 @@ function Header() {
       </div>
     </header>
   );
-}
+});
 
 export default Header;

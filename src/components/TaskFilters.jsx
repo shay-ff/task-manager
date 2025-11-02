@@ -1,33 +1,34 @@
-import React from 'react';
+import { memo, useMemo, useCallback } from 'react';
 import { useTaskContext } from '../contexts/TaskContext';
 import './TaskFilters.css';
 
 /**
  * TaskFilters component for filtering tasks by status
+ * Memoized to prevent unnecessary re-renders
  * @returns {JSX.Element} - TaskFilters component
  */
-function TaskFilters() {
+const TaskFilters = memo(function TaskFilters() {
   const { filter, setFilter, tasks } = useTaskContext();
 
-  // Calculate task counts for each filter
-  const taskCounts = {
+  // Calculate task counts for each filter (memoized for performance)
+  const taskCounts = useMemo(() => ({
     all: tasks.length,
     pending: tasks.filter(task => !task.completed).length,
     completed: tasks.filter(task => task.completed).length
-  };
+  }), [tasks]);
 
   /**
-   * Handle filter change
+   * Handle filter change (memoized to prevent unnecessary re-renders)
    * @param {string} newFilter - The new filter to apply
    */
-  const handleFilterChange = (newFilter) => {
+  const handleFilterChange = useCallback((newFilter) => {
     setFilter(newFilter);
-  };
+  }, [setFilter]);
 
   /**
-   * Filter button configuration
+   * Filter button configuration (memoized for performance)
    */
-  const filterButtons = [
+  const filterButtons = useMemo(() => [
     {
       key: 'all',
       label: 'All Tasks',
@@ -46,7 +47,7 @@ function TaskFilters() {
       count: taskCounts.completed,
       icon: '✅'
     }
-  ];
+  ], [taskCounts]);
 
   return (
     <div className="task-filters">
@@ -88,6 +89,6 @@ function TaskFilters() {
       </div>
     </div>
   );
-}
+});
 
 export default TaskFilters;
